@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Password Strength Analyzer | CyberSec Tool</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- ── Animated Background ── -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+  <canvas id="matrix-canvas"></canvas>
+
+  <!-- ── Toast ── -->
+  <div id="toast-container"></div>
+
+  <!-- ── Navigation ── -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="brand-icon">🔐</span>
+      <span class="brand-name">Pass<span>Guard</span></span>
+    </div>
+    <div class="nav-links">
+      <a href="#home" class="nav-link active" onclick="showSection('home')">Home</a>
+      <a href="#analyzer" class="nav-link" onclick="showSection('analyzer')">Analyzer</a>
+      <a href="#generator" class="nav-link" onclick="showSection('generator')">Generator</a>
+      <a href="#tips" class="nav-link" onclick="showSection('tips')">Tips</a>
+      <a href="#history" class="nav-link" onclick="showSection('history')">History</a>
+    </div>
+    <div class="nav-status">
+      <span class="status-dot"></span>
+      <span class="status-text">SECURE</span>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!--  SECTION 1: HOME                          -->
+  <!-- ══════════════════════════════════════════ -->
+  <section id="home" class="section active">
+    <div class="hero-container">
+      <!-- Floating particles -->
+      <div class="particles" id="particles"></div>
+
+      <div class="hero-content">
+        <div class="hero-badge">⚡ CYBERSECURITY TOOL v2.0</div>
+        <h1 class="hero-title">
+          Password<br/>
+          <span class="gradient-text">Strength</span><br/>
+          Analyzer
+        </h1>
+        <p class="hero-desc">
+          Analyze your password security in real-time.<br/>
+          Check entropy, crack time, breach status, and more.
+        </p>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hs-val">10K+</div>
+            <div class="hs-lbl">Passwords Analyzed</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hs-val">99.9%</div>
+            <div class="hs-lbl">Accuracy Rate</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hs-val">0ms</div>
+            <div class="hs-lbl">Analysis Time</div>
+          </div>
+        </div>
+        <div class="hero-btns">
+          <button class="btn btn-primary" onclick="showSection('analyzer')">
+            🔍 Analyze Password
+          </button>
+          <button class="btn btn-outline" onclick="showSection('generator')">
+            ⚙️ Generate Password
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="lock-container">
+          <div class="lock-outer">
+            <div class="lock-inner">
+              <div class="lock-icon" id="hero-lock">🔒</div>
+            </div>
+          </div>
+          <div class="orbit orbit-1"></div>
+          <div class="orbit orbit-2"></div>
+          <div class="orbit orbit-3"></div>
+          <div class="orbit-dot dot-1">🔑</div>
+          <div class="orbit-dot dot-2">🛡️</div>
+          <div class="orbit-dot dot-3">⚡</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features grid -->
+    <div class="features-grid">
+      <div class="feature-card" onclick="showSection('analyzer')">
+        <div class="fc-icon">🔍</div>
+        <div class="fc-title">Deep Analysis</div>
+        <div class="fc-desc">Entropy calculation, character sets, pattern detection</div>
+      </div>
+      <div class="feature-card" onclick="showSection('analyzer')">
+        <div class="fc-icon">⏱️</div>
+        <div class="fc-title">Crack Time</div>
+        <div class="fc-desc">Estimate how long it takes to brute-force your password</div>
+      </div>
+      <div class="feature-card" onclick="showSection('analyzer')">
+        <div class="fc-icon">🚨</div>
+        <div class="fc-title">Breach Check</div>
+        <div class="fc-desc">Check if your password appears in known data breaches</div>
+      </div>
+      <div class="feature-card" onclick="showSection('generator')">
+        <div class="fc-icon">⚙️</div>
+        <div class="fc-title">Generator</div>
+        <div class="fc-desc">Generate cryptographically secure passwords instantly</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!--  SECTION 2: ANALYZER                      -->
+  <!-- ══════════════════════════════════════════ -->
+  <section id="analyzer" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">🔍 Password Analyzer</h2>
+        <p class="section-sub">Enter any password to get a detailed security analysis</p>
+      </div>
+
+      <div class="analyzer-layout">
+        <!-- Input Card -->
+        <div class="analyzer-card">
+          <div class="card-header-bar">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <span class="card-title-bar">PASSWORD_INPUT.exe</span>
+          </div>
+
+          <div class="input-section">
+            <label class="field-label">ENTER PASSWORD</label>
+            <div class="password-input-wrap">
+              <span class="input-prefix">></span>
+              <input
+                type="password"
+                id="password-input"
+                class="password-field"
+                placeholder="Type your password here..."
+                autocomplete="off"
+                oninput="onPasswordInput(this.value)"
+              />
+              <button class="toggle-vis" id="toggle-btn" onclick="toggleVisibility()">👁️</button>
+              <button class="clear-btn" onclick="clearPassword()" title="Clear">✕</button>
+            </div>
+
+            <!-- Live strength bar under input -->
+            <div class="live-bar-wrap">
+              <div class="live-bar" id="live-bar">
+                <div class="live-fill" id="live-fill"></div>
+              </div>
+              <span class="live-label" id="live-label">Enter password to analyze</span>
+            </div>
+          </div>
+
+          <button class="analyze-btn" id="analyze-btn" onclick="analyzePassword()">
+            <span class="btn-icon">⚡</span>
+            <span>ANALYZE PASSWORD</span>
+            <span class="btn-arrow">→</span>
+          </button>
+
+          <!-- Breach checker -->
+          <div class="breach-section">
+            <div class="breach-title">🚨 BREACH DATABASE CHECK</div>
+            <button class="breach-btn" onclick="checkBreach()">Check for Breaches</button>
+            <div class="breach-result" id="breach-result"></div>
+          </div>
+        </div>
+
+        <!-- Results Card -->
+        <div class="results-card" id="results-card">
+          <div class="card-header-bar">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <span class="card-title-bar">ANALYSIS_RESULTS.log</span>
+          </div>
+
+          <div class="no-result" id="no-result">
+            <div class="nr-icon">📊</div>
+            <div class="nr-text">Results will appear here</div>
+            <div class="nr-sub">Enter a password and click Analyze</div>
+          </div>
+
+          <div class="result-content" id="result-content" style="display:none">
+            <!-- Overall Rating -->
+            <div class="overall-rating" id="overall-rating">
+              <div class="rating-circle" id="rating-circle">
+                <div class="rating-score" id="rating-score">0</div>
+                <div class="rating-label" id="rating-label">WEAK</div>
+              </div>
+              <div class="rating-info">
+                <div class="rating-title" id="rating-title">Analyzing...</div>
+                <div class="rating-desc" id="rating-desc"></div>
+              </div>
+            </div>
+
+            <!-- Strength Meter -->
+            <div class="strength-section">
+              <div class="strength-label-row">
+                <span>Strength</span>
+                <span id="strength-pct">0%</span>
+              </div>
+              <div class="strength-meter">
+                <div class="strength-fill" id="strength-fill"></div>
+              </div>
+              <div class="strength-segments">
+                <span>Weak</span><span>Fair</span><span>Good</span><span>Strong</span><span>Excellent</span>
+              </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+              <div class="stat-item" id="stat-length">
+                <div class="si-icon">📏</div>
+                <div class="si-info">
+                  <div class="si-label">LENGTH</div>
+                  <div class="si-val" id="sv-length">0</div>
+                </div>
+                <div class="si-badge" id="sb-length">—</div>
+              </div>
+              <div class="stat-item" id="stat-upper">
+                <div class="si-icon">🔠</div>
+                <div class="si-info">
+                  <div class="si-label">UPPERCASE</div>
+                  <div class="si-val" id="sv-upper">No</div>
+                </div>
+                <div class="si-badge" id="sb-upper">—</div>
+              </div>
+              <div class="stat-item" id="stat-lower">
+                <div class="si-icon">🔡</div>
+                <div class="si-info">
+                  <div class="si-label">LOWERCASE</div>
+                  <div class="si-val" id="sv-lower">No</div>
+                </div>
+                <div class="si-badge" id="sb-lower">—</div>
+              </div>
+              <div class="stat-item" id="stat-numbers">
+                <div class="si-icon">🔢</div>
+                <div class="si-info">
+                  <div class="si-label">NUMBERS</div>
+                  <div class="si-val" id="sv-numbers">No</div>
+                </div>
+                <div class="si-badge" id="sb-numbers">—</div>
+              </div>
+              <div class="stat-item" id="stat-special">
+                <div class="si-icon">✨</div>
+                <div class="si-info">
+                  <div class="si-label">SPECIAL CHARS</div>
+                  <div class="si-val" id="sv-special">No</div>
+                </div>
+                <div class="si-badge" id="sb-special">—</div>
+              </div>
+              <div class="stat-item" id="stat-entropy">
+                <div class="si-icon">🧮</div>
+                <div class="si-info">
+                  <div class="si-label">ENTROPY</div>
+                  <div class="si-val" id="sv-entropy">0 bits</div>
+                </div>
+                <div class="si-badge" id="sb-entropy">—</div>
+              </div>
+            </div>
+
+            <!-- Crack Time -->
+            <div class="crack-section">
+              <div class="crack-title">⏱️ ESTIMATED CRACK TIME</div>
+              <div class="crack-methods">
+                <div class="crack-method">
+                  <span class="cm-name">💻 Offline Attack</span>
+                  <span class="cm-time" id="ct-offline">—</span>
+                </div>
+                <div class="crack-method">
+                  <span class="cm-name">🌐 Online Attack</span>
+                  <span class="cm-time" id="ct-online">—</span>
+                </div>
+                <div class="crack-method">
+                  <span class="cm-name">🤖 GPU Cluster</span>
+                  <span class="cm-time" id="ct-gpu">—</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Suggestions -->
+            <div class="suggestions-section">
+              <div class="sug-title">💡 SUGGESTIONS</div>
+              <div id="suggestions-list"></div>
+            </div>
+
+            <!-- Save button -->
+            <button class="save-btn" onclick="saveToHistory()">💾 SAVE TO HISTORY</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!--  SECTION 3: GENERATOR                     -->
+  <!-- ══════════════════════════════════════════ -->
+  <section id="generator" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">⚙️ Password Generator</h2>
+        <p class="section-sub">Generate cryptographically secure passwords instantly</p>
+      </div>
+
+      <div class="generator-layout">
+        <div class="gen-card">
+          <div class="card-header-bar">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <span class="card-title-bar">PASSWORD_GENERATOR.exe</span>
+          </div>
+
+          <!-- Generated password display -->
+          <div class="gen-output-wrap">
+            <div class="gen-output" id="gen-output">Click Generate to create a password</div>
+            <div class="gen-actions">
+              <button class="gen-action-btn" onclick="generatePassword()" title="Generate">🔄</button>
+              <button class="gen-action-btn" onclick="copyGenerated()" title="Copy">📋</button>
+              <button class="gen-action-btn" onclick="analyzeGenerated()" title="Analyze">🔍</button>
+            </div>
+          </div>
+
+          <!-- Gen strength bar -->
+          <div class="gen-strength-wrap" id="gen-strength-wrap" style="display:none">
+            <div class="strength-meter">
+              <div class="strength-fill" id="gen-strength-fill"></div>
+            </div>
+            <span class="gen-strength-label" id="gen-strength-label">Strong</span>
+          </div>
+
+          <!-- Options -->
+          <div class="gen-options">
+            <div class="gen-option">
+              <label class="go-label">PASSWORD LENGTH</label>
+              <div class="length-control">
+                <input type="range" id="len-slider" min="8" max="64" value="16" class="len-slider" oninput="updateLenDisplay(this.value)"/>
+                <span class="len-display" id="len-display">16</span>
+              </div>
+            </div>
+
+            <div class="gen-option">
+              <label class="go-label">CHARACTER SETS</label>
+              <div class="charset-grid">
+                <label class="charset-option">
+                  <input type="checkbox" id="cb-upper" checked/>
+                  <span class="cb-custom"></span>
+                  <span class="cb-text">🔠 Uppercase (A-Z)</span>
+                </label>
+                <label class="charset-option">
+                  <input type="checkbox" id="cb-lower" checked/>
+                  <span class="cb-custom"></span>
+                  <span class="cb-text">🔡 Lowercase (a-z)</span>
+                </label>
+                <label class="charset-option">
+                  <input type="checkbox" id="cb-numbers" checked/>
+                  <span class="cb-custom"></span>
+                  <span class="cb-text">🔢 Numbers (0-9)</span>
+                </label>
+                <label class="charset-option">
+                  <input type="checkbox" id="cb-symbols" checked/>
+                  <span class="cb-custom"></span>
+                  <span class="cb-text">✨ Symbols (!@#$...)</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="gen-option">
+              <label class="go-label">PRESETS</label>
+              <div class="preset-btns">
+                <button class="preset-btn" onclick="applyPreset('pin')">📱 PIN</button>
+                <button class="preset-btn" onclick="applyPreset('memorable')">🧠 Memorable</button>
+                <button class="preset-btn" onclick="applyPreset('secure')">🔐 Secure</button>
+                <button class="preset-btn" onclick="applyPreset('ultra')">💎 Ultra</button>
+              </div>
+            </div>
+          </div>
+
+          <button class="analyze-btn" onclick="generatePassword()">
+            <span class="btn-icon">⚙️</span>
+            <span>GENERATE SECURE PASSWORD</span>
+          </button>
+        </div>
+
+        <!-- Passphrase generator -->
+        <div class="gen-card">
+          <div class="card-header-bar">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <span class="card-title-bar">PASSPHRASE_GENERATOR.exe</span>
+          </div>
+          <p style="color:var(--text2);font-size:14px;margin-bottom:16px">Generate a memorable passphrase — easy to remember, hard to crack!</p>
+          <div class="gen-output-wrap">
+            <div class="gen-output" id="phrase-output" style="font-size:14px;letter-spacing:1px">Click Generate Phrase</div>
+            <div class="gen-actions">
+              <button class="gen-action-btn" onclick="generatePhrase()">🔄</button>
+              <button class="gen-action-btn" onclick="copyPhrase()">📋</button>
+            </div>
+          </div>
+          <div class="gen-option" style="margin-top:16px">
+            <label class="go-label">WORD COUNT</label>
+            <div class="length-control">
+              <input type="range" id="word-slider" min="3" max="8" value="4" class="len-slider" oninput="updateWordDisplay(this.value)"/>
+              <span class="len-display" id="word-display">4</span>
+            </div>
+          </div>
+          <button class="analyze-btn" onclick="generatePhrase()" style="margin-top:16px">
+            <span class="btn-icon">🧠</span>
+            <span>GENERATE PASSPHRASE</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!--  SECTION 4: TIPS                          -->
+  <!-- ══════════════════════════════════════════ -->
+  <section id="tips" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">🛡️ Cybersecurity Tips</h2>
+        <p class="section-sub">Best practices to keep your accounts secure</p>
+      </div>
+      <div class="tips-grid">
+        <div class="tip-card tier-critical">
+          <div class="tip-tier">🔴 CRITICAL</div>
+          <div class="tip-icon">📏</div>
+          <div class="tip-title">Use 12+ Characters</div>
+          <div class="tip-body">Longer passwords exponentially increase security. Each extra character multiplies the possible combinations.</div>
+          <div class="tip-example">Example: <code>MySecure#Pass2024!</code></div>
+        </div>
+        <div class="tip-card tier-critical">
+          <div class="tip-tier">🔴 CRITICAL</div>
+          <div class="tip-icon">🚫</div>
+          <div class="tip-title">Never Reuse Passwords</div>
+          <div class="tip-body">If one account is breached, reused passwords give attackers access to all your accounts.</div>
+          <div class="tip-example">Use a password manager like Bitwarden or 1Password</div>
+        </div>
+        <div class="tip-card tier-high">
+          <div class="tip-tier">🟠 HIGH</div>
+          <div class="tip-icon">📱</div>
+          <div class="tip-title">Enable MFA/2FA</div>
+          <div class="tip-body">Multi-factor authentication adds an extra layer. Even if your password is stolen, attackers need your device too.</div>
+          <div class="tip-example">Use Google Authenticator or Authy</div>
+        </div>
+        <div class="tip-card tier-high">
+          <div class="tip-tier">🟠 HIGH</div>
+          <div class="tip-icon">📖</div>
+          <div class="tip-title">Avoid Dictionary Words</div>
+          <div class="tip-body">Dictionary attacks can crack common words in seconds. Combine random words or use character substitutions.</div>
+          <div class="tip-example">❌ sunshine → ✅ $unSh1ne#42!</div>
+        </div>
+        <div class="tip-card tier-medium">
+          <div class="tip-tier">🟡 MEDIUM</div>
+          <div class="tip-icon">🔔</div>
+          <div class="tip-title">Monitor Breach Alerts</div>
+          <div class="tip-body">Sign up for haveibeenpwned.com alerts to know when your email appears in data breaches.</div>
+          <div class="tip-example">Visit haveibeenpwned.com to check now</div>
+        </div>
+        <div class="tip-card tier-medium">
+          <div class="tip-tier">🟡 MEDIUM</div>
+          <div class="tip-icon">🔄</div>
+          <div class="tip-title">Rotate Sensitive Passwords</div>
+          <div class="tip-body">Change passwords for critical accounts (banking, email) every 3-6 months or after any breach notification.</div>
+          <div class="tip-example">Set a calendar reminder every 90 days</div>
+        </div>
+        <div class="tip-card tier-low">
+          <div class="tip-tier">🟢 GOOD PRACTICE</div>
+          <div class="tip-icon">🧩</div>
+          <div class="tip-title">Use Passphrases</div>
+          <div class="tip-body">A random sequence of 4+ words is both strong and memorable. "Purple$Horse*Running!Cloud" is excellent.</div>
+          <div class="tip-example">Try our Passphrase Generator above!</div>
+        </div>
+        <div class="tip-card tier-low">
+          <div class="tip-tier">🟢 GOOD PRACTICE</div>
+          <div class="tip-icon">🌐</div>
+          <div class="tip-title">Use a VPN on Public WiFi</div>
+          <div class="tip-body">Public networks can be monitored. A VPN encrypts your traffic, preventing password interception.</div>
+          <div class="tip-example">ProtonVPN, Mullvad, or NordVPN are recommended</div>
+        </div>
+      </div>
+
+      <!-- Dos and Don'ts -->
+      <div class="dos-donts">
+        <div class="dos">
+          <h3 class="dd-title">✅ DO</h3>
+          <ul class="dd-list">
+            <li>Use a unique password for every account</li>
+            <li>Use uppercase, lowercase, numbers, symbols</li>
+            <li>Use a reputable password manager</li>
+            <li>Enable two-factor authentication everywhere</li>
+            <li>Check if your email was breached</li>
+            <li>Keep your software updated</li>
+          </ul>
+        </div>
+        <div class="donts">
+          <h3 class="dd-title">❌ DON'T</h3>
+          <ul class="dd-list">
+            <li>Use your name, birthday, or pet's name</li>
+            <li>Use "password", "123456", "qwerty"</li>
+            <li>Share passwords via email or text</li>
+            <li>Write passwords on sticky notes</li>
+            <li>Use the same password for 2+ sites</li>
+            <li>Auto-save passwords in browsers</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!--  SECTION 5: HISTORY                       -->
+  <!-- ══════════════════════════════════════════ -->
+  <section id="history" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">📋 Analysis History</h2>
+        <p class="section-sub">Your recent password analyses (stored locally)</p>
+      </div>
+      <div class="history-controls">
+        <span id="history-count" style="color:var(--text2);font-size:13px">0 records</span>
+        <button class="btn btn-outline btn-sm" onclick="clearHistory()">🗑️ Clear All</button>
+      </div>
+      <div id="history-list">
+        <div class="empty-history">
+          <div style="font-size:48px;margin-bottom:12px">📭</div>
+          <div style="color:var(--text2)">No history yet — analyze a password first!</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">🔐 PassGuard v2.0</div>
+      <div class="footer-note">⚠️ This tool runs entirely in your browser. No passwords are sent to any server.</div>
+      <div class="footer-links">
+        <span onclick="showSection('analyzer')">Analyzer</span>
+        <span onclick="showSection('generator')">Generator</span>
+        <span onclick="showSection('tips')">Tips</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
